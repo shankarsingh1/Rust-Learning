@@ -1,30 +1,30 @@
-DATATYPES..................
+// DATATYPES..................
 
-fn main() {
+// fn main() {
     
-    println!("Hello, world!");
-    let ans:u32 = sum(32 ,3);
+//     println!("Hello, world!");
+//     let ans:u32 = sum(32 ,3);
 
-    println!("{}" ,ans );
+//     println!("{}" ,ans );
 
-    let name = String::from("shanxar");
-    println!("cool name is {}", name);
+//     let name = String::from("shanxar");
+//     println!("cool name is {}", name);
 
-    let v = vec![1,2,3,4,5];
+//     let v = vec![1,2,3,4,5];
 
-    println!("{:?}" , v);
+//     println!("{:?}" , v);
 
-    for i in 0..100{
-        print!("{} ",i);
-    }
-}
+//     for i in 0..100{
+//         print!("{} ",i);
+//     }
+// }
 
 
-fn sum(a:u32 , b:u32) -> u32{
+// fn sum(a:u32 , b:u32) -> u32{
 
-return a+b;
+// return a+b;
 
-}
+// }
 
 
 // MEMORY MANAGEMENT AND BORROWING.............
@@ -45,7 +45,7 @@ return a+b;
 
 
 
-// STRUCT...................................
+// STRUCT...............................................................................
 
 // struct Rect{
 
@@ -77,7 +77,7 @@ return a+b;
 
 // }
 
-// ENUM.........................
+// ENUM......................................................................
 
 // enum Shape {
 //    Circle(f64),
@@ -101,12 +101,12 @@ return a+b;
 //    return ans;
 // }
 
-// Option and Result ENUM..................
+// Option and Result ENUM..............................................................................
 
 // Option is used for None.
 // Result is used for error handling.
 
-// Option....
+// Option................................................
 
 // fn main(){
 
@@ -136,7 +136,7 @@ return a+b;
 // return None;
 // }
 
-// Result................
+// Result.................................................
 
 
 // use std::fs::read_to_string;
@@ -225,3 +225,136 @@ return a+b;
 
 // return map;
 // }
+
+// ITERATOR.......................................
+
+// => iter()  immutable, Borrow , Just read values
+// => iter_mut() mutable, Borrow , change values
+// => into_iter() mutable, move ownership , used in regular for loop by default
+
+
+// assignment : filter odd values , then double them and create a new vector.
+// fn main(){
+
+//     let vec = vec![1,2,3,4,7];
+   
+//     let iter = vec.iter();
+    
+
+//     let iter_ans = iter.filter(|x| *x%2 != 0).map(|x| x*2);
+
+    //  here we create a new vector
+    //  let mut res = Vec::new();
+    // for value in iter_ans {
+    //     res.push(value);
+    // }
+
+    // here we change a iterator back into a vector using collect();
+//     let res : Vec<i32> = iter_ans.collect();
+ 
+//     for i in res {
+//         println!("{} ", i);
+//     }
+
+
+// }
+
+
+// STRING SLICES..............................................
+
+// fn main(){
+
+// let name = String::from("shankar singh");
+// let first_n = first_name(&name);
+// println!("{}" , first_n);
+
+
+// }
+// fn first_name(str : &String) -> &str {
+
+// let mut index = 0;
+
+// for (_ , i) in str.chars().enumerate(){
+    
+    
+//     if i == ' ' {
+//         break;
+//     }
+//     index += 1;
+// }
+
+// return &str[0..=index];
+
+// }
+
+//GENERIC...................................................................
+
+
+// fn main(){
+
+// println!("largest number {}", largest(3,6));
+// println!("largest char {}", largest("f","a"));
+
+
+// }
+
+// fn largest<T:std::cmp::PartialOrd>(a:T,b:T) -> T{
+
+//     if a > b {
+//             a
+//     } else {
+//             b
+//     }
+// }
+
+
+
+// TRAITS = it's lika abstract class..............................................................
+
+pub trait Summary{
+fn summarize(&self)-> String{
+    return String::from("hello this summary");
+}
+}
+
+trait Fix {
+fn fix(&self)-> String{
+    return String::from("hello this is fix");
+}
+}
+struct User {
+    name : String,
+    age : u32,
+}
+
+impl Summary for User{
+    fn summarize(&self)-> String{
+        return format!("name is {} , age is {}", self.name , self.age);  // overriding of summarize()
+    }
+}
+
+impl Fix for User{
+    
+}
+
+
+fn main(){
+
+    let user1 = User{
+        name : String::from("shanxar"),
+        age : 21,
+    };
+ 
+ notify(user1);
+//  println!("{}", user1.summarize());
+}
+
+// MULTIPLE TRAIT BOUND OR TRAIT AS A FN PARAMETER 
+// LIKE A FN WILL ONLY IMPLEMENT IF IT'S IMP CERTAIN TRAIT
+
+fn notify<T: Summary + Fix>(u:T){
+
+println!("{}", u.summarize());
+println!("{}", u.fix());
+
+}
