@@ -311,50 +311,193 @@
 
 // TRAITS = it's lika abstract class..............................................................
 
-pub trait Summary{
-fn summarize(&self)-> String{
-    return String::from("hello this summary");
-}
-}
+// pub trait Summary{
+// fn summarize(&self)-> String{
+//     return String::from("hello this summary");
+// }
+// }
 
-trait Fix {
-fn fix(&self)-> String{
-    return String::from("hello this is fix");
-}
-}
-struct User {
-    name : String,
-    age : u32,
-}
+// trait Fix {
+// fn fix(&self)-> String{
+//     return String::from("hello this is fix");
+// }
+// }
+// struct User {
+//     name : String,
+//     age : u32,
+// }
 
-impl Summary for User{
-    fn summarize(&self)-> String{
-        return format!("name is {} , age is {}", self.name , self.age);  // overriding of summarize()
-    }
-}
+// impl Summary for User{
+//     fn summarize(&self)-> String{
+//         return format!("name is {} , age is {}", self.name , self.age);  // overriding of summarize()
+//     }
+// }
 
-impl Fix for User{
+// impl Fix for User{
     
-}
+// }
 
 
-fn main(){
+// fn main(){
 
-    let user1 = User{
-        name : String::from("shanxar"),
-        age : 21,
-    };
+//     let user1 = User{
+//         name : String::from("shanxar"),
+//         age : 21,
+//     };
  
- notify(user1);
-//  println!("{}", user1.summarize());
+//  notify(user1);
+// //  println!("{}", user1.summarize());
+// }
+
+// // MULTIPLE TRAIT BOUND OR TRAIT AS A FN PARAMETER 
+// // LIKE A FN WILL ONLY IMPLEMENT IF IT'S IMP CERTAIN TRAIT
+
+// fn notify<T: Summary + Fix>(u:T){
+
+// println!("{}", u.summarize());
+// println!("{}", u.fix());
+
+// }
+
+
+// //LIFETIME........................................................................................................
+
+// fn main(){
+// let longest_str;
+// let str1 = String::from("fsd");
+//          {
+//                let str2 = String::from("fsdfdfafdf");
+//                longest_str=largest(&str1,&str2);
+
+//          }
+//          println!("{}", longest_str); // longest_str is only valid in that block for correct ans.
+// }
+
+// fn largest<'a>(fir:&'a str , b:&'a str)-> &'a str{  // 'a is the lifetime generic
+
+// if fir.len() > b.len() {
+//     fir
+// } else {
+//     b
+// }
+
+// }
+
+// //STRUCT WITH LIFETIMES.......................................
+
+// struct User<'a>{ // this specifies that if name goes out of scope then User will ultimately go out of scope
+//             name : &'a str, 
+// }
+
+// fn main(){
+
+//     let nam = String::from("shanxar");
+//     let user1 = User{
+//             name: &nam,
+//     };
+
+//     println!("{}", user1.name);
+// }
+
+// // MULTITHREADING.........................................................................................................
+
+// // MOVE KEYWORD : USED TO move ownership in a thread....................................................................
+
+
+
+// use std::thread;
+
+// fn main(){
+
+// let v = vec![2,3,4];
+
+//    let handle = thread::spawn( move|| {
+
+// println!("vector is {:?}", v)
+
+//     });
+
+//     handle.join().unwrap();
+
+// }
+
+
+// // MESSAGE PASSING...........................................................................................
+
+// use std::{
+//     sync::mpsc,
+//     thread,
+// };
+
+// fn main(){
+
+// let (tx,rx) = mpsc::channel();
+
+// thread::spawn(move || {
+
+//       tx.send(String::from("shanxarr")).unwrap();
+
+// });
+
+// let value = rx.recv();  // not using unwrap() coz can cause panic in thread or stop execution
+
+// match value {
+//     Ok(value)=> println!("{}", value),
+//     Err(error)=> println!("got error in reading value {}", error),
+// }
+
+// }
+
+// // PROGRAM TO FIND SUM OF 1-10^8
+use std::{
+  sync::mpsc,
+   thread};
+
+fn main() {
+let (tx, rx) = mpsc::channel();
+
+
+let tx1 = tx.clone();
+let handle1 = thread::spawn(move || {
+    let mut ans:u128 = 0;
+    for i in 1..100 {
+        ans += i;
+    }
+    tx1.send(ans).unwrap();
+});
+
+let tx2 = tx.clone();
+let handle2 = thread::spawn(move || {
+    let mut ans:u128 = 0;
+    for i in 100..10000 {
+        ans += i;
+    }
+    tx2.send(ans).unwrap();
+});
+
+let tx3 = tx.clone();
+let handle3 = thread::spawn(move || {
+    let mut ans:u128 = 0;
+    for i in 10000..1000000 {
+        ans += i;
+    }
+    tx3.send(ans).unwrap();
+});
+
+handle1.join().unwrap();
+handle2.join().unwrap();
+handle3.join().unwrap();
+
+let mut total:u128 = 0;
+for _ in 0..3 {
+    total += rx.recv().unwrap();
 }
 
-// MULTIPLE TRAIT BOUND OR TRAIT AS A FN PARAMETER 
-// LIKE A FN WILL ONLY IMPLEMENT IF IT'S IMP CERTAIN TRAIT
+for i in 1000000..=10000000 {
+    total += i;
+}
 
-fn notify<T: Summary + Fix>(u:T){
+println!("sum of 1-10^8 = {}", total);
 
-println!("{}", u.summarize());
-println!("{}", u.fix());
 
 }
