@@ -383,7 +383,7 @@
 
 // }
 
-// //STRUCT WITH LIFETIMES.......................................
+// //STRUCT WITH LIFETIMES.............................................................................
 
 // struct User<'a>{ // this specifies that if name goes out of scope then User will ultimately go out of scope
 //             name : &'a str, 
@@ -449,55 +449,130 @@
 // }
 
 // // PROGRAM TO FIND SUM OF 1-10^8
-use std::{
-  sync::mpsc,
-   thread};
+// use std::{
+//   sync::mpsc,
+//    thread};
 
-fn main() {
-let (tx, rx) = mpsc::channel();
+// fn main() {
+// let (tx, rx) = mpsc::channel();
 
 
-let tx1 = tx.clone();
-let handle1 = thread::spawn(move || {
-    let mut ans:u128 = 0;
-    for i in 1..100 {
-        ans += i;
-    }
-    tx1.send(ans).unwrap();
-});
+// let tx1 = tx.clone();
+// let handle1 = thread::spawn(move || {
+//     let mut ans:u128 = 0;
+//     for i in 1..100 {
+//         ans += i;
+//     }
+//     tx1.send(ans).unwrap();
+// });
 
-let tx2 = tx.clone();
-let handle2 = thread::spawn(move || {
-    let mut ans:u128 = 0;
-    for i in 100..10000 {
-        ans += i;
-    }
-    tx2.send(ans).unwrap();
-});
+// let tx2 = tx.clone();
+// let handle2 = thread::spawn(move || {
+//     let mut ans:u128 = 0;
+//     for i in 100..10000 {
+//         ans += i;
+//     }
+//     tx2.send(ans).unwrap();
+// });
 
-let tx3 = tx.clone();
-let handle3 = thread::spawn(move || {
-    let mut ans:u128 = 0;
-    for i in 10000..1000000 {
-        ans += i;
-    }
-    tx3.send(ans).unwrap();
-});
+// let tx3 = tx.clone();
+// let handle3 = thread::spawn(move || {
+//     let mut ans:u128 = 0;
+//     for i in 10000..1000000 {
+//         ans += i;
+//     }
+//     tx3.send(ans).unwrap();
+// });
 
-handle1.join().unwrap();
-handle2.join().unwrap();
-handle3.join().unwrap();
+// handle1.join().unwrap();
+// handle2.join().unwrap();
+// handle3.join().unwrap();
 
-let mut total:u128 = 0;
-for _ in 0..3 {
-    total += rx.recv().unwrap();
+// let mut total:u128 = 0;
+// for _ in 0..3 {
+//     total += rx.recv().unwrap();
+// }
+
+// for i in 1000000..=10000000 {
+//     total += i;
+// }
+
+// println!("sum of 1-10^8 = {}", total);
+
+
+// }
+
+// MACROS :- .............................................................................................................
+
+// DECLARATIVE AND PROCEDURAL MACROS  
+
+
+// // SERDE....................................................................................................  
+
+// use serde::{Deserialize,Serialize};
+
+// #[derive(Deserialize,Serialize,Debug)]
+
+// struct User {
+
+//     name : String,
+//     age:String,
+// }
+
+// fn main(){
+
+//     let user1 = User{
+//         name : String::from("shanxarr"),
+//         age : String::from("21"),
+//     };
+
+//   // serialization : converting rust ds into diff formats
+//     let serialized_string = serde_json::to_string(&user1);
+
+//     match serialized_string{
+//         Ok(val)=> println!("{}", val),
+//         Err(_)=> println!("got error"),
+//     }           
+
+//     // Deserialization : converting diff formats into rust DS
+
+//    let input_user = String::from("{\"name\" : \"random\" , \"age\" : \"10\"}");
+
+//    let u: Result<User, serde_json::Error> = serde_json::from_str(&input_user);
+//    println!("{:?}", u.unwrap());
+// }
+
+
+
+// BORSH.......................................................................................................
+// 
+use borsh::{BorshDeserialize,BorshSerialize};
+
+#[derive(BorshDeserialize,BorshSerialize,Debug)]
+
+struct User {
+
+    name : String,
+    age:String,
 }
 
-for i in 1000000..=10000000 {
-    total += i;
-}
 
-println!("sum of 1-10^8 = {}", total);
+fn main(){
 
+     let user1 = User{
+        name : String::from("shanxarr"),
+        age : String::from("21"),
+    };
 
+    let mut v : Vec<u8> =  Vec::new();
+
+    let ans = user1.serialize(&mut v);
+    match ans {
+        Ok(_)=>println!("{:?}", v),
+        Err(_) => println!("error during steralizing"),
+    }
+
+    // deserialize
+    let user = User::try_from_slice(&v).unwrap();
+    println!("{}",user.name);
 }
